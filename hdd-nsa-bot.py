@@ -1,10 +1,13 @@
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = '5661825852:AAFU7t-PSe5smkgDKnSYORKewHfMUoD6bL8'
+#-- Чтение конфига --
+import json
+with open('config.json') as f:
+    config = json.load(f)
+#----
 
-bot = Bot(token=API_TOKEN)
+bot = Bot(token=config['API_TOKEN'])
 dp = Dispatcher(bot)
-
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
