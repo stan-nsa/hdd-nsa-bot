@@ -1,4 +1,5 @@
 from aiogram import Bot, Dispatcher, executor, types
+import nhl
 
 #-- Чтение конфига --
 import json
@@ -20,12 +21,12 @@ async def send_schedule_team(message: types.Message):
 @dp.message_handler(commands=['today'])
 async def send_schedule_today(message: types.Message):
     from datetime import date
-    await message.reply("Расписание матчей на сегодня - "+date.today().strftime("%d %B %Y")+":\n. . .\n. . .\n. . .\n. . .\n. . .\n")
+    await message.reply("Расписание матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
 
 @dp.message_handler(commands=['results'])
 async def send_results_today(message: types.Message):
     from datetime import date
-    await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":\n. . .\n. . .\n. . .\n. . .\n. . .\n")
+    await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
 
 @dp.message_handler()
 async def echo(message: types.Message):
@@ -35,7 +36,3 @@ async def echo(message: types.Message):
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
 
-# Schedule:  https://statsapi.web.nhl.com/api/v1/schedule?expand=schedule.teams,schedule.scoringplays,schedule.game.seriesSummary,seriesSummary.series,schedule.linescore
-#            https://statsapi.web.nhl.com/api/v1/schedule?date=2022-11-23
-# Standings: https://statsapi.web.nhl.com/api/v1/standings
-# Boxscore:  https://statsapi.web.nhl.com/api/v1/game/2021021092/boxscore
