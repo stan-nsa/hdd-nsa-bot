@@ -21,12 +21,18 @@ async def send_schedule_team(message: types.Message):
 @dp.message_handler(commands=['today'])
 async def send_schedule_today(message: types.Message):
     from datetime import date
-    await message.reply("Расписание матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
+    #await message.reply("Расписание матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
+    await message.reply("Расписание матчей:" + nhl.get_schedule_today())
 
 @dp.message_handler(commands=['results'])
 async def send_results_today(message: types.Message):
     from datetime import date
-    await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
+    #await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
+    await message.reply("Результаты матчей:" + nhl.get_schedule_today(), parse_mode="HTML")
+
+@dp.message_handler(commands=['tab'])
+async def send_schedule_team(message: types.Message):
+    await message.reply("<b>test</b>", parse_mode="HTML")
 
 @dp.message_handler()
 async def echo(message: types.Message):
