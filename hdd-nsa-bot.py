@@ -22,21 +22,21 @@ async def send_schedule_team(message: types.Message):
 async def send_schedule_today(message: types.Message):
     from datetime import date
     #await message.reply("Расписание матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
-    await message.reply("Расписание матчей:" + nhl.get_schedule_today())
+    await message.reply("Расписание матчей:" + nhl.get_schedule_today(), parse_mode="HTML")
 
 @dp.message_handler(commands=['results'])
 async def send_results_today(message: types.Message):
     from datetime import date
     #await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
-    await message.reply("Результаты матчей:" + nhl.get_schedule_today())
+    await message.reply("Результаты матчей:" + nhl.get_schedule_today(), parse_mode="HTML")
 
 @dp.message_handler(commands=['test'])
 async def send_schedule_team(message: types.Message):
-    await message.reply("<a href='/test'>test-test-test</a>", parse_mode="HTML")
+    await message.reply('<a href="https://ya.ru">Текст</a>\n<a href="/start">Старт</a>', parse_mode="HTML")
 
 @dp.message_handler()
 async def echo(message: types.Message):
-    await message.answer(message.text)
+    await message.answer(message.text, parse_mode="HTML")
 
 
 if __name__ == '__main__':
