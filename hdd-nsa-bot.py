@@ -12,7 +12,7 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-    await message.reply("Привет!\nЯ Эхо-бот!\nОтправь мне любое сообщение, а я тебе обязательно отвечу!")
+    await message.reply("Привет!\nЯ NHL-бот канала \"Хоккей для друзей\"!\n\nЯ могу показывать:\n/today - Расписание матчей на сегодня\n/results - результаты сегодняшних матчей")
 
 @dp.message_handler(commands=['schedule'])
 async def send_schedule_team(message: types.Message):
@@ -28,11 +28,11 @@ async def send_schedule_today(message: types.Message):
 async def send_results_today(message: types.Message):
     from datetime import date
     #await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
-    await message.reply("Результаты матчей:" + nhl.get_schedule_today(), parse_mode="HTML")
+    await message.reply("Результаты матчей:" + nhl.get_schedule_today())
 
-@dp.message_handler(commands=['tab'])
+@dp.message_handler(commands=['test'])
 async def send_schedule_team(message: types.Message):
-    await message.reply("<b>test</b>", parse_mode="HTML")
+    await message.reply("<a href='/test'>test-test-test</a>", parse_mode="HTML")
 
 @dp.message_handler()
 async def echo(message: types.Message):
