@@ -26,22 +26,22 @@ def get_schedule_today():
     txt = ""
     for date in data['dates']:
 
-        txt += "\n<b>--- Date: " + date['date'] + " ---</b>\n"
+        txt += f"\n{emojize(':calendar:')} <b>{date['date']}:</b>\n"
 
         for game in date['games']:
-
+            # Scheduled
             if int(game['status']['statusCode']) < 3:# 1 - Scheduled; 2 - Pre-Game
                 txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} {emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
-
+            # Live
             elif int(game['status']['statusCode']) < 5:# 3 - Live/In Progress; 4 - Live/In Progress - Critical
-                txt += f"{get_game_teams_score(game['teams'], game['status'])} {emojize(':live:')} {game['linescore']['currentPeriodOrdinal']})\n"
-
+                txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':green_circle:')} {game['linescore']['currentPeriodOrdinal']})\n"
+            # Final
             elif int(game['status']['statusCode']) < 8:# 5 - Final/Game Over; 6 - Final; 7 - Final
                 txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':chequered_flag:')} {'' if game['linescore']['currentPeriod']==3 else game['linescore']['currentPeriodOrdinal']}\n"
-
-            elif int(game['status']['statusCode']) < 10:
+            # TBD/Postponed
+            elif int(game['status']['statusCode']) < 10:# 8 - Scheduled (Time TBD); 9 - Postponed
                 txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} {emojize(':stop_sign:')} {game['status']['detailedState']}\n"
-
+            # Other
             else:
                 txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']}\n"
 
