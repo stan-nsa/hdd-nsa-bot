@@ -18,23 +18,33 @@ tzVLAT = pytz.timezone("Asia/Vladivostok")
 def get_schedule_today():
     # fetch game list
     schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
-    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-25"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-26"
     #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
     response = requests.get(NHL_API_URL + schedule_str, params={"Content-Type": "application/json"})
     data = response.json()
     # loop through dates
     txt = ""
     for date in data['dates']:
-        txt += "\n--- Date: " + date['date'] + " ---\n"
-        # and now through games
+
+        txt += "\n<b>--- Date: " + date['date'] + " ---</b>\n"
+
         for game in date['games']:
-            if int(game['status']['statusCode']) < 3 :
-                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} - {get_game_time_tz(game['gameDate'])}\n"
-            elif int(game['status']['statusCode']) in {8, 9} :
-                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} - {game['status']['detailedState']}\n"
+
+            if int(game['status']['statusCode']) < 3:# 1 - Scheduled; 2 - Pre-Game
+                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} {emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
+
+            elif int(game['status']['statusCode']) < 5:# 3 - Live/In Progress; 4 - Live/In Progress - Critical
+                txt += f"{get_game_teams_score(game['teams'], game['status'])} {emojize(':live:')} {game['linescore']['currentPeriodOrdinal']})\n"
+
+            elif int(game['status']['statusCode']) < 8:# 5 - Final/Game Over; 6 - Final; 7 - Final
+                txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':chequered_flag:')} {'' if game['linescore']['currentPeriod']==3 else game['linescore']['currentPeriodOrdinal']}\n"
+
+            elif int(game['status']['statusCode']) < 10:
+                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} {emojize(':stop_sign:')} {game['status']['detailedState']}\n"
+
             else:
-                period = "" if (int(game['status']['statusCode'])==7)and(game['linescore']['currentPeriod']==3) else "/" + game['linescore']['currentPeriodOrdinal']
-                txt += f"{get_game_teams_score(game['teams'], game['status'])} / ({game['status']['detailedState']}{period})\n"
+                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']}\n"
+
     return txt
 
 
