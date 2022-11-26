@@ -31,7 +31,7 @@ def get_schedule_today():
         for game in date['games']:
             # Scheduled
             if int(game['status']['statusCode']) < 3:# 1 - Scheduled; 2 - Pre-Game
-                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} {emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
+                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} {emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
             # Live
             elif int(game['status']['statusCode']) < 5:# 3 - Live/In Progress; 4 - Live/In Progress - Critical
                 txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':green_circle:')} {game['linescore']['currentPeriodOrdinal']})\n"
@@ -40,10 +40,10 @@ def get_schedule_today():
                 txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':chequered_flag:')} {'' if game['linescore']['currentPeriod']==3 else game['linescore']['currentPeriodOrdinal']}\n"
             # TBD/Postponed
             elif int(game['status']['statusCode']) < 10:# 8 - Scheduled (Time TBD); 9 - Postponed
-                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']} {emojize(':stop_sign:')} {game['status']['detailedState']}\n"
+                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} {emojize(':stop_sign:')} {game['status']['detailedState']}\n"
             # Other
             else:
-                txt += f"{game['teams']['away']['team']['abbreviation']} @ {game['teams']['home']['team']['abbreviation']}\n"
+                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']}\n"
 
     return txt
 
@@ -76,7 +76,7 @@ def get_game_teams_score(game_teams, game_status):
         else:
             home_team = f"<b>{home_team}</b>"
 
-    game_teams_score = f"{away_team} {str(get_game_team_score(away_team_score))}:{str(get_game_team_score(home_team_score))} {home_team}"
+    game_teams_score = f"{away_team} {str(get_game_team_score(away_team_score))}{emojize(':ice_hockey:')}{str(get_game_team_score(home_team_score))} {home_team}"
 
     return game_teams_score
 
