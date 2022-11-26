@@ -6,6 +6,7 @@
 import requests
 from datetime import datetime, timezone
 import pytz
+from emoji import emojize #Overview of all emoji: https://carpedm20.github.io/emoji/
 
 NHL_API_URL = "https://statsapi.web.nhl.com/api/v1"
 
@@ -13,7 +14,6 @@ NHL_API_URL = "https://statsapi.web.nhl.com/api/v1"
 tzEST = pytz.timezone("US/Eastern")
 tzMSK = pytz.timezone("Europe/Moscow")
 tzVLAT = pytz.timezone("Asia/Vladivostok")
-
 
 def get_schedule_today():
     # fetch game list
@@ -55,10 +55,12 @@ def get_game_time_tz(dt_str):
 def get_game_teams_score(game_teams, game_status):
 
     away_team = game_teams['away']['team']['abbreviation']
-    away_team_score = game_teams['away']['score']
+    #away_team_score = game_teams['away']['score']
+    away_team_score = emojize(f":keycap_{game_teams['away']['score']}:")
 
     home_team = game_teams['home']['team']['abbreviation']
-    home_team_score = game_teams['home']['score']
+    #home_team_score = game_teams['home']['score']
+    home_team_score = emojize(f":keycap_{game_teams['home']['score']}:")
 
     if int(game_status['statusCode']) == 7 : # Final
         if away_team_score > home_team_score :
