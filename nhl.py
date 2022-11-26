@@ -4,7 +4,7 @@
 # Boxscore:  https://statsapi.web.nhl.com/api/v1/game/2021021092/boxscore
 
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date, timedelta
 import pytz
 from emoji import emojize #Overview of all emoji: https://carpedm20.github.io/emoji/
 
@@ -15,20 +15,20 @@ tzEST = pytz.timezone("US/Eastern")
 tzMSK = pytz.timezone("Europe/Moscow")
 tzVLAT = pytz.timezone("Asia/Vladivostok")
 
-def get_schedule_today():
-    # fetch game list
-    schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
-    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-26"
-    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
-    response = requests.get(NHL_API_URL + schedule_str, params={"Content-Type": "application/json"})
-    data = response.json()
+
+def get_request_nhl_api(query_str):
+    response = requests.get(NHL_API_URL + query_str, params={"Content-Type": "application/json"})
+    return response.json()
+
+
+def get_schedule_day(data):
     # loop through dates
     txt = ""
-    for date in data['dates']:
+    for date_day in data['dates']:
 
-        txt += f"\n{emojize(':calendar:')} <b>{date['date']}:</b>\n"
+        txt += f"\n{emojize(':calendar:')} <b>{date_day['date']}:</b>\n"
 
-        for game in date['games']:
+        for game in date_day['games']:
             # Scheduled
             if int(game['status']['statusCode']) < 3:# 1 - Scheduled; 2 - Pre-Game
                 txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} {emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
@@ -44,6 +44,64 @@ def get_schedule_today():
             # Other
             else:
                 txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']}\n"
+
+    return txt
+
+
+def get_results_today():
+
+    schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-26"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
+
+    data = get_request_nhl_api(schedule_str)
+
+    txt = get_schedule_day(data)
+
+    return txt
+
+
+def get_schedule_today():
+
+    schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-26"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
+
+    schedule_str += f"&date={date.today().strftime('%Y-%m-%d')}"
+
+    data = get_request_nhl_api(schedule_str)
+
+    txt = get_schedule_day(data)
+
+    return txt
+
+
+def get_schedule_tomorrow():
+
+    schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-26"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
+
+    schedule_str += f"&date={(date.today() + timedelta(days=1)).strftime('%Y-%m-%d')}"
+
+    data = get_request_nhl_api(schedule_str)
+
+    txt = get_schedule_day(data)
+
+    return txt
+
+
+def get_schedule_yesterday():
+
+    schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-26"
+    #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
+
+    schedule_str += f"&date={(date.today() - timedelta(days=1)).strftime('%Y-%m-%d')}"
+
+    data = get_request_nhl_api(schedule_str)
+
+    txt = get_schedule_day(data)
 
     return txt
 

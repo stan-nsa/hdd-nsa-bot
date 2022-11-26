@@ -16,32 +16,45 @@ async def send_welcome(message: types.Message):
     await message.reply("Привет!\n"
                         "Я NHL-бот канала \"Хоккей для друзей\"!\n\n"
                         "Я могу показывать:\n"
-                        "/today - Расписание матчей на сегодня\n"
-                        "/results - результаты сегодняшних матчей", parse_mode="HTML")
+                        "/results - результаты сегодняшних матчей\n"
+                        "/today - расписание матчей на сегодня\n"
+                        "/yesterday - Расписание матчей на вчера\n"
+                        "/tomorrow - Расписание матчей на завтра", parse_mode="HTML")
+
 
 @dp.message_handler(commands=['schedule'])
 async def send_schedule_team(message: types.Message):
     await message.reply("Расписание матчей <team>:\n. . .\n. . .\n. . .\n. . .\n. . .\n")
 
+
 @dp.message_handler(commands=['today'])
 async def send_schedule_today(message: types.Message):
-    from datetime import date
-    #await message.reply("Расписание матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
     await message.reply(f"{emojize(':calendar:')} <b>Расписание матчей:</b>\n{nhl.get_schedule_today()}", parse_mode="HTML")
+
+
+@dp.message_handler(commands=['tomorrow'])
+async def send_schedule_today(message: types.Message):
+    await message.reply(f"{emojize(':calendar:')} <b>Расписание матчей:</b>\n{nhl.get_schedule_tomorrow()}", parse_mode="HTML")
+
+
+@dp.message_handler(commands=['yesterday'])
+async def send_schedule_today(message: types.Message):
+    await message.reply(f"{emojize(':calendar:')} <b>Расписание матчей:</b>\n{nhl.get_schedule_yesterday()}", parse_mode="HTML")
+
 
 @dp.message_handler(commands=['results'])
 async def send_results_today(message: types.Message):
-    from datetime import date
-    #await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
-    await message.reply(f"{emojize(':goal_net::ice_hockey:')} <b>Результаты матчей:</b>\n{nhl.get_schedule_today()}", parse_mode="HTML")
+    await message.reply(f"{emojize(':goal_net::ice_hockey:')} <b>Результаты матчей:</b>\n{nhl.get_results_today()}", parse_mode="HTML")
+
 
 @dp.message_handler(commands=['test'])
 async def send_schedule_team(message: types.Message):
     await message.reply('<a href="https://ya.ru">Текст</a>\n<a href="/start">Старт</a>', parse_mode="HTML")
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    await message.answer(message.text, parse_mode="HTML")
+
+#@dp.message_handler()
+#async def echo(message: types.Message):
+#    await message.answer(message.text, parse_mode="HTML")
 
 
 if __name__ == '__main__':
