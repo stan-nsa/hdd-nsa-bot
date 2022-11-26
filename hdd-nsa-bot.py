@@ -29,7 +29,7 @@ async def send_schedule_today(message: types.Message):
 async def send_results_today(message: types.Message):
     from datetime import date
     #await message.reply("Результаты матчей на сегодня - "+date.today().strftime("%d %B %Y")+":"+nhl.get_schedule_today())
-    await message.reply("Результаты матчей: " + emojize(':ice_hockey: :goal_net:') + nhl.get_schedule_today(), parse_mode="HTML")
+    await message.reply("Результаты матчей: " + emojize(':goal_net::ice_hockey:') + nhl.get_schedule_today(), parse_mode="HTML")
 
 @dp.message_handler(commands=['test'])
 async def send_schedule_team(message: types.Message):

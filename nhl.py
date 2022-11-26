@@ -55,22 +55,28 @@ def get_game_time_tz(dt_str):
 def get_game_teams_score(game_teams, game_status):
 
     away_team = game_teams['away']['team']['abbreviation']
-    #away_team_score = game_teams['away']['score']
-    away_team_score = emojize(f":keycap_{game_teams['away']['score']}:")
+    away_team_score = game_teams['away']['score']
 
     home_team = game_teams['home']['team']['abbreviation']
-    #home_team_score = game_teams['home']['score']
-    home_team_score = emojize(f":keycap_{game_teams['home']['score']}:")
+    home_team_score = game_teams['home']['score']
 
-    if int(game_status['statusCode']) == 7 : # Final
+    if int(game_status['statusCode']) == 7:# Final
         if away_team_score > home_team_score :
             away_team = f"<b>{away_team}</b>"
         else:
             home_team = f"<b>{home_team}</b>"
 
-    game_teams_score = f"{away_team} {str(away_team_score)}:{str(home_team_score)} {home_team}"
+    game_teams_score = f"{away_team} {str(get_game_team_score(away_team_score))}:{str(get_game_team_score(home_team_score))} {home_team}"
 
     return game_teams_score
+
+
+def get_game_team_score(game_team_score, emoji=True):
+
+    if emoji:
+        game_team_score = emojize(f":keycap_{game_team_score}:") if (game_team_score <= 10) else emojize(f":keycap_{game_team_score//10}::keycap_{game_team_score%10}:")
+
+    return game_team_score
 
 
 #print(get_schedule_today())
