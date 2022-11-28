@@ -22,6 +22,11 @@ async def send_welcome(message: types.Message):
                         "/tomorrow - Расписание матчей на завтра", parse_mode="HTML")
 
 
+@dp.message_handler(commands=['gameday'])
+async def send_schedule_gameday(message: types.Message):
+    await message.answer(f"#GameDay - {emojize(':calendar:')} <b>Расписание матчей:</b>\n{nhl.get_schedule_today()}", parse_mode="HTML")
+
+
 @dp.message_handler(commands=['schedule'])
 async def send_schedule_team(message: types.Message):
     await message.reply("Расписание матчей <team>:\n. . .\n. . .\n. . .\n. . .\n. . .\n")
@@ -49,13 +54,22 @@ async def send_results_today(message: types.Message):
 
 @dp.message_handler(commands=['test'])
 async def send_schedule_team(message: types.Message):
-    await message.reply('<a href="https://ya.ru">Текст</a>\n<a href="/start">Старт</a>', parse_mode="HTML")
+    await message.reply('<tg-spoiler><a href="https://ya.ru">CAR🏒PIT</a></tg-spoiler>', parse_mode="HTML")
 
 
-#@dp.message_handler()
-#async def echo(message: types.Message):
-#    await message.answer(message.text, parse_mode="HTML")
-
+"""
+@dp.message_handler()
+async def echo(message: types.Message):
+    #print(message.text)
+    #await message.answer(message.text)
+    #await message.answer(message.text, parse_mode='HTML')
+    #await message.answer(message.text, parse_mode='MarkdownV2')
+    await message.answer(message.text)
+    await message.answer(message.md_text)
+    await message.answer(message.html_text)
+    # Дополняем исходный текст:
+    await message.answer(f'<u>Ваш текст</u>:\n\n{message.html_text}', parse_mode='HTML')
+"""
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)

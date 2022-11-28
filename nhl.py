@@ -144,6 +144,8 @@ def get_game_team_score(game_team_score, emoji=True):
     if emoji:
         game_team_score = emojize(f":keycap_{game_team_score}:") if (game_team_score <= 10) else emojize(f":keycap_{game_team_score//10}::keycap_{game_team_score%10}:")
 
+    game_team_score = f"<tg-spoiler>{game_team_score}</tg-spoiler>"
+
     return game_team_score
 
 
