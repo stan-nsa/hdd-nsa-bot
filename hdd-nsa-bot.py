@@ -1,12 +1,16 @@
 from aiogram import Bot, Dispatcher, executor, types
-import nhl
 from emoji import emojize #Overview of all emoji: https://carpedm20.github.io/emoji/
+
+import nhl
+import db
+
 
 #-- Чтение конфига --
 import json
 with open('config.json') as f:
     config = json.load(f)
 #----
+
 
 bot = Bot(token=config['API_TOKEN'])
 dp = Dispatcher(bot)
@@ -54,6 +58,7 @@ async def send_results_today(message: types.Message):
 
 @dp.message_handler(commands=['test'])
 async def send_schedule_team(message: types.Message):
+    db.insert_user(message.from_user)
     await message.reply('<tg-spoiler><a href="https://ya.ru">CAR🏒PIT</a></tg-spoiler>', parse_mode="HTML")
 
 
@@ -72,5 +77,7 @@ async def echo(message: types.Message):
 """
 
 if __name__ == '__main__':
+    #db.db_connect()
     executor.start_polling(dp, skip_updates=True)
+    #db.db_close()
 
