@@ -21,6 +21,24 @@ def get_request_nhl_api(query_str):
     return response.json()
 
 
+def get_teams():
+
+    teams_str = "/teams"
+
+    data = get_request_nhl_api(teams_str)
+
+    return data['teams']
+
+
+def get_teams_for_settings():
+    teams = get_teams()
+    txt = ""
+    for team in teams:
+        txt += f"{team['name']}\n"
+
+    return txt
+
+
 def get_schedule_day(data):
     # loop through dates
     txt = ""

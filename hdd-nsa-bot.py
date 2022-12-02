@@ -3,6 +3,7 @@ from emoji import emojize #Overview of all emoji: https://carpedm20.github.io/em
 
 import nhl
 import db
+import keyboards
 
 
 #-- Чтение конфига --
@@ -56,8 +57,24 @@ async def send_results_today(message: types.Message):
     await message.reply(f"{emojize(':goal_net::ice_hockey:')} <b>Результаты матчей:</b>\n{nhl.get_results_today()}", parse_mode="HTML")
 
 
+@dp.message_handler(commands=['set'])
+async def user_settings(message: types.Message):
+    db.insert_user(message.from_user)
+    await message.reply(f"Привет, {message.from_user['first_name']}!\nЗа какую команду ты болеешь?", parse_mode="HTML", reply_markup=keyboards.kb_user)
+
+
+@dp.message_handler(commands=['favorites'])
+async def user_settings(message: types.Message):
+    await message.reply(f"Выбери команду, за которую болеешь:\n{nhl.get_teams_for_settings()}", parse_mode="HTML")
+
+
+@dp.message_handler(commands=['followed'])
+async def user_settings(message: types.Message):
+    await message.reply(f"Выбери команды, за которыми будешь следить:\n{nhl.get_teams_for_settings()}", parse_mode="HTML")
+
+
 @dp.message_handler(commands=['test'])
-async def send_schedule_team(message: types.Message):
+async def send_test(message: types.Message):
     db.insert_user(message.from_user)
     await message.reply('<tg-spoiler><a href="https://ya.ru">CAR🏒PIT</a></tg-spoiler>', parse_mode="HTML")
 
