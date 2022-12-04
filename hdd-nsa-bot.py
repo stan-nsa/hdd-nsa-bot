@@ -1,4 +1,5 @@
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher.filters import Text
 from emoji import emojize #Overview of all emoji: https://carpedm20.github.io/emoji/
 
 import nhl
@@ -65,12 +66,28 @@ async def user_settings(message: types.Message):
 
 @dp.message_handler(commands=['favorites'])
 async def user_settings(message: types.Message):
-    await message.reply(f"Выбери команду, за которую болеешь:\n{nhl.get_teams_for_settings()}", parse_mode="HTML")
+    await message.answer("Выбери команду, за которую болеешь:", reply_markup=keyboards.kb_favorites_teams)
 
 
 @dp.message_handler(commands=['followed'])
 async def user_settings(message: types.Message):
-    await message.reply(f"Выбери команды, за которыми будешь следить:\n{nhl.get_teams_for_settings()}", parse_mode="HTML")
+    await message.reply(f"Выбери команды, за которыми будешь следить:", reply_markup=keyboards.kb_followed_teams)
+
+
+@dp.callback_query_handler(Text(startswith='favorites_'))
+async def favorites(callback : types.CallbackQuery):
+    team = callback.data.split('_')[1]
+    user = callback.from_user
+    db.insert_favorites(user, team)
+    await callback.answer(f"Команда '{team.split(':')[1]}' добавлена в ваш список Избранное!", show_alert=True)
+
+
+@dp.callback_query_handler(Text(startswith='followed_'))
+async def followed(callback : types.CallbackQuery):
+    team = callback.data.split('_')[1]
+    user = callback.from_user
+    db.insert_favorites(user, team, 'followed')
+    await callback.answer(f"Команда '{team.split(':')[1]}' добавлена в ваш список Слежения!", show_alert=True)
 
 
 @dp.message_handler(commands=['test'])
@@ -94,7 +111,5 @@ async def echo(message: types.Message):
 """
 
 if __name__ == '__main__':
-    #db.db_connect()
     executor.start_polling(dp, skip_updates=True)
-    #db.db_close()
 

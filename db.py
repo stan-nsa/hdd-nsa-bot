@@ -28,7 +28,6 @@ def db_close():
 
 
 def insert_user(user):
-    #print(user)
     global db_conn, db_cur
 
     db_connect()
@@ -36,6 +35,28 @@ def insert_user(user):
     try:
         params = (user['id'], user['username'], user['first_name'], user['last_name'])
         q = 'REPLACE INTO users(id, username, first_name, last_name) VALUES(?, ?, ?, ?)'
+
+        db_cur.execute(q, params)
+        db_conn.commit()
+
+    except sqlite3.Error as error:
+        print("Ошибка при подключении к sqlite", error)
+
+    db_close()
+
+
+def insert_favorites(user, team : str, type='favorites'):
+    global db_conn, db_cur
+
+    insert_user(user)
+
+    db_connect()
+
+    team = team.split(':')
+
+    try:
+        params = (user['id'], type, team[0], team[1])
+        q = 'REPLACE INTO user_teams(user_id, type, team_id, team_name) VALUES(?, ?, ?, ?)'
 
         db_cur.execute(q, params)
         db_conn.commit()
