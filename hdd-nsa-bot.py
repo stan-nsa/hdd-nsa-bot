@@ -25,7 +25,9 @@ async def send_welcome(message: types.Message):
                         "/results - результаты сегодняшних матчей\n"
                         "/today - расписание матчей на сегодня\n"
                         "/yesterday - Расписание матчей на вчера\n"
-                        "/tomorrow - Расписание матчей на завтра", parse_mode="HTML")
+                        "/tomorrow - Расписание матчей на завтра\n"
+                        "/schedule - Расписание матчей любимых команд\n", \
+                        parse_mode="HTML")
 
 
 @dp.message_handler(commands=['gameday'])
@@ -35,7 +37,7 @@ async def send_schedule_gameday(message: types.Message):
 
 @dp.message_handler(commands=['schedule'])
 async def send_schedule_team(message: types.Message):
-    await message.reply("Расписание матчей <team>:\n. . .\n. . .\n. . .\n. . .\n. . .\n")
+    await message.reply(f"{emojize(':calendar:')} <b>Расписание матчей любимых команд:</b>\n{nhl.get_schedule_user_teams(message.from_user)}", parse_mode="HTML")
 
 
 @dp.message_handler(commands=['today'])
@@ -61,17 +63,17 @@ async def send_results_today(message: types.Message):
 @dp.message_handler(commands=['set'])
 async def user_settings(message: types.Message):
     db.insert_user(message.from_user)
-    await message.reply(f"Привет, {message.from_user['first_name']}!\nЗа какую команду ты болеешь?", parse_mode="HTML", reply_markup=keyboards.kb_user)
+    await message.reply(f"Привет, {message.from_user['first_name']}!\nЗа какую команду ты болеешь?", parse_mode="HTML", reply_markup=keyboards.init_kb_user_settings())
 
 
 @dp.message_handler(commands=['favorites'])
 async def user_settings(message: types.Message):
-    await message.answer("Выбери команду, за которую болеешь:", reply_markup=keyboards.kb_favorites_teams)
+    await message.answer("Выбери команду, за которую болеешь:", reply_markup=keyboards.init_kb_user_favorites_teams(message.from_user))
 
 
 @dp.message_handler(commands=['followed'])
 async def user_settings(message: types.Message):
-    await message.reply(f"Выбери команды, за которыми будешь следить:", reply_markup=keyboards.kb_followed_teams)
+    await message.reply(f"Выбери команды, за которыми будешь следить:", reply_markup=keyboards.init_kb_followed_teams(message.from_user))
 
 
 @dp.callback_query_handler(Text(startswith='favorites_'))

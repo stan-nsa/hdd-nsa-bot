@@ -67,3 +67,25 @@ def insert_favorites(user, team : str, type='favorites'):
     db_close()
 
 
+def get_user_favorites_teams(user, type='favorites'):
+    global db_conn, db_cur
+    user_teams = None
+
+    db_connect()
+
+    try:
+        params = (user['id'], type)
+        q = 'SELECT team_id FROM user_teams WHERE user_id = ? AND type = ?'
+
+        db_cur.execute(q, params)
+
+        user_teams = db_cur.fetchall()
+
+    except sqlite3.Error as error:
+        print("Ошибка при подключении к sqlite", error)
+
+    db_close()
+
+    return user_teams
+
+

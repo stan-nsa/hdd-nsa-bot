@@ -7,6 +7,7 @@ import requests
 from datetime import datetime, timezone, date, timedelta
 import pytz
 from emoji import emojize #Overview of all emoji: https://carpedm20.github.io/emoji/
+import db
 
 NHL_API_URL = "https://statsapi.web.nhl.com/api/v1"
 
@@ -22,8 +23,7 @@ def get_request_nhl_api(query_str):
 
 
 def get_teams():
-
-    teams_str = "/teams"
+    teams_str = '/teams'
 
     data = get_request_nhl_api(teams_str)
 
@@ -49,16 +49,19 @@ def get_schedule_day(data):
         for game in date_day['games']:
             # Scheduled
             if int(game['status']['statusCode']) < 3:# 1 - Scheduled; 2 - Pre-Game
-                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} {emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
+                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} " \
+                       f"{emojize(':alarm_clock:')} {get_game_time_tz(game['gameDate'])}\n"
             # Live
             elif int(game['status']['statusCode']) < 5:# 3 - Live/In Progress; 4 - Live/In Progress - Critical
-                txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':green_circle:')} {game['linescore']['currentPeriodOrdinal']})\n"
+                txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':green_circle:')} {game['linescore']['currentPeriodOrdinal']}\n"
             # Final
             elif int(game['status']['statusCode']) < 8:# 5 - Final/Game Over; 6 - Final; 7 - Final
-                txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':chequered_flag:')} {'' if game['linescore']['currentPeriod']==3 else game['linescore']['currentPeriodOrdinal']}\n"
+                txt += f"{get_game_teams_score(game['teams'], game['status'])} - {emojize(':chequered_flag:')} " \
+                       f"{'' if game['linescore']['currentPeriod']==3 else game['linescore']['currentPeriodOrdinal']}\n"
             # TBD/Postponed
             elif int(game['status']['statusCode']) < 10:# 8 - Scheduled (Time TBD); 9 - Postponed
-                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} {emojize(':stop_sign:')} {game['status']['detailedState']}\n"
+                txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']} " \
+                       f"{emojize(':stop_sign:')} {game['status']['detailedState']}\n"
             # Other
             else:
                 txt += f"{game['teams']['away']['team']['abbreviation']}{emojize(':ice_hockey:')}{game['teams']['home']['team']['abbreviation']}\n"
@@ -116,6 +119,26 @@ def get_schedule_yesterday():
     #schedule_str = "/schedule?expand=schedule.teams,schedule.linescore&date=2022-11-23"
 
     schedule_str += f"&date={(date.today() - timedelta(days=1)).strftime('%Y-%m-%d')}"
+
+    data = get_request_nhl_api(schedule_str)
+
+    txt = get_schedule_day(data)
+
+    return txt
+
+
+def get_schedule_user_teams(user):
+
+    schedule_str = "/schedule?expand=schedule.teams,schedule.linescore"
+
+    schedule_str += f"&startDate={(date.today() + timedelta(days=-5)).strftime('%Y-%m-%d')}"
+    schedule_str += f"&endDate={(date.today() + timedelta(days=5)).strftime('%Y-%m-%d')}"
+
+    schedule_str += "&teamId="
+
+    user_teams = db.get_user_favorites_teams(user)
+    for team in user_teams:
+        schedule_str += f"{team[0]},"
 
     data = get_request_nhl_api(schedule_str)
 
