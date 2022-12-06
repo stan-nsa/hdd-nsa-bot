@@ -20,13 +20,18 @@ dp = Dispatcher(bot)
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     await message.reply("Привет!\n"
-                        "Я NHL-бот канала \"Хоккей для друзей\"!\n\n"
+                        "Я NHL-бот!\n\n"
+                        "Напиши мне по ссылке: @HDD_nsa_bot и запусти меня!\n"
                         "Я могу показывать:\n"
                         "/results - результаты сегодняшних матчей\n"
                         "/today - расписание матчей на сегодня\n"
                         "/yesterday - Расписание матчей на вчера\n"
                         "/tomorrow - Расписание матчей на завтра\n"
-                        "/schedule - Расписание матчей любимых команд\n", \
+                        "\n"
+                        "Сделай индивидуальные настройки:\n"
+                        "/set\n"
+                        "И тогда Я смогу показывать:\n"
+                        "/schedule - Расписание матчей твоих любимых команд\n", \
                         parse_mode="HTML")
 
 
@@ -94,8 +99,9 @@ async def followed(callback : types.CallbackQuery):
 
 @dp.message_handler(commands=['test'])
 async def send_test(message: types.Message):
-    db.insert_user(message.from_user)
     await message.reply('<tg-spoiler><a href="https://ya.ru">CAR🏒PIT</a></tg-spoiler>', parse_mode="HTML")
+    await bot.send_message(message.from_user.id, 'test')
+    await message.delete()
 
 
 """
