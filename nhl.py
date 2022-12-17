@@ -3,6 +3,9 @@
 # Standings: https://statsapi.web.nhl.com/api/v1/standings
 # Boxscore:  https://statsapi.web.nhl.com/api/v1/game/2021021092/boxscore
 
+# All players: https://records.nhl.com/site/api/player/
+
+
 import requests
 from datetime import datetime, timezone, date, timedelta
 import pytz
